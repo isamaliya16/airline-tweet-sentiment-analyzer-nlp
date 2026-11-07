@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import joblib
 import nltk
 import pandas as pd
@@ -8,12 +10,16 @@ from nlp_utils import clean_text, heuristic_sentiment
 
 st.set_page_config(page_title='Airline Tweet Sentiment Analyzer')
 
-# NLTK data is downloaded quietly at start-up
-for resource in ['vader_lexicon', 'averaged_perceptron_tagger', 'averaged_perceptron_tagger_eng']:
-    try:
-        nltk.download(resource, quiet=True)
-    except Exception:
-        pass
+# Resolve files relative to this script, not the current working directory,
+# so the app also works when started from the repo root (e.g. Streamlit Cloud).
+BASE_DIR = Path(__file__).resolve().parent
+MODEL_PATH = BASE_DIR / 'sentiment_model.joblib'
+
+# NLTK resource -> path used by nltk.data.find() to check if it is installed
+NLTK_RESOURCES = {
+    'vader_lexicon': 'sentiment/vader_lexicon.zip/vader_lexicon/vader_lexicon.txt',
+    'averaged_perceptron_tagger_eng': 'taggers/averaged_perceptron_tagger_eng/',
+}
 
 MAX_CHARS = 500
 examples = [
@@ -24,8 +30,32 @@ examples = [
 
 
 @st.cache_resource
+def ensure_nltk_data():
+    """Download missing NLTK data once per server process.
+
+    Returns the set of resources that are available. nltk.download() returns
+    False (instead of raising) on failure, so availability is re-checked.
+    """
+    available = set()
+    for resource, path in NLTK_RESOURCES.items():
+        try:
+            nltk.data.find(path)
+        except LookupError:
+            try:
+                nltk.download(resource, quiet=True)
+            except Exception:
+                pass
+        try:
+            nltk.data.find(path)
+            available.add(resource)
+        except LookupError:
+            pass
+    return frozenset(available)
+
+
+@st.cache_resource
 def load_model():
-    return joblib.load('sentiment_model.joblib')
+    return joblib.load(MODEL_PATH)
 
 
 @st.cache_resource
@@ -56,6 +86,8 @@ def set_example(text):
     st.session_state['tweet'] = text
 
 
+nltk_ready = ensure_nltk_data()
+
 st.title('Airline Tweet Sentiment Analyzer')
 st.sidebar.header('About')
 st.sidebar.markdown('[Dataset: Twitter US Airline Sentiment](https://www.kaggle.com/datasets/crowdflower/twitter-airline-sentiment)')
@@ -82,18 +114,24 @@ if st.button('Predict'):
         st.write('**Cleaned text:**', cleaned if cleaned else '(empty)')
 
         if approach == 'VADER':
-            show_label(vader_label(tweet))
+            if 'vader_lexicon' in nltk_ready:
+                show_label(vader_label(tweet))
+            else:
+                st.error('The VADER lexicon could not be downloaded. Check the internet connection and reload.')
         elif not cleaned:
             st.warning('Nothing is left after cleaning (only symbols, links or mentions). Try a longer sentence.')
         elif approach == 'Heuristic':
             show_label(heuristic_sentiment(tweet))
         else:
             model = load_model()
-            show_label(model.predict([cleaned])[0])
             probabilities = pd.Series(model.predict_proba([cleaned])[0], index=model.classes_)
+            show_label(probabilities.idxmax())
             st.bar_chart(probabilities)
 
         if cleaned:
             with st.expander('POS tags'):
-                tags = nltk.pos_tag(cleaned.split())
-                st.dataframe(pd.DataFrame(tags, columns=['Word', 'Tag']))
+                if 'averaged_perceptron_tagger_eng' in nltk_ready:
+                    tags = nltk.pos_tag(cleaned.split())
+                    st.dataframe(pd.DataFrame(tags, columns=['Word', 'Tag']))
+                else:
+                    st.info('POS tagger data could not be downloaded, so tags are unavailable.')

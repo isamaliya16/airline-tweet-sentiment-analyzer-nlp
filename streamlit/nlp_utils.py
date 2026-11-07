@@ -10,7 +10,7 @@ def clean_text(s):
     s = re.sub(r'https?://\S+', ' ', s)      # remove URLs
     s = re.sub(r'@\w+', ' ', s)              # remove @mentions
     s = re.sub(r'#(\w+)', r'\1', s)          # keep hashtag word
-    s = re.sub(r"['’‘]", '', s)  # don't -> dont           # don't -> dont
+    s = re.sub(r"['’‘]", '', s)             # don't -> dont
     s = re.sub(r'[^a-z\s]', ' ', s)          # numbers, punctuation, emojis
     s = re.sub(r'\s+', ' ', s).strip()       # extra spaces
     return s
