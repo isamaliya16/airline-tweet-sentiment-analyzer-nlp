@@ -2,7 +2,7 @@
 
 [![Live App](https://img.shields.io/badge/🚀%20LIVE%20APP-Open%20on%20Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://YOUR-APP-NAME.streamlit.app)
 
-**🔗 Live Streamlit URL:** https://YOUR-APP-NAME.streamlit.app
+**🔗 Live Streamlit URL:** https://airline-tweet-sentiment-analyzer-nlp-1.streamlit.app/
 
 ![Banner](https://capsule-render.vercel.app/api?type=waving&color=0:0F4C81,50:1E88E5,100:00ACC1&height=220&section=header&text=NLP%20%7C%20PR%201&fontSize=46&fontColor=ffffff&animation=fadeIn&fontAlignY=35&desc=Airline%20Tweet%20Sentiment%20Analyzer%20%C2%B7%20From%20Raw%20Text%20to%20a%20Deployed%20App)
 
@@ -289,42 +289,6 @@ A part-of-speech tagger labels every word as noun, verb, adjective and so on, us
 - Warnings for empty input, text that is empty after cleaning, and input longer than 500 characters (truncated)
 - NLTK data downloaded safely at start-up
 
-<br>
-
----
-
-## ▶️ How to Run Locally
-
-```bash
-# 1. Clone the repository
-git clone https://github.com/YOUR-USERNAME/YOUR-REPO.git
-cd YOUR-REPO
-
-# 2. Install the requirements
-pip install -r requirements.txt
-
-# 3. Start the app
-streamlit run app.py
-```
-
-To re-run the notebook, also install `gensim`, `matplotlib` and `jupyter`, download `Tweets.csv` from [Kaggle](https://www.kaggle.com/datasets/crowdflower/twitter-airline-sentiment) and run **Restart & Run All** in `NLP_PR1.ipynb`.
-
-<br>
-
----
-
-## 📁 Repository Structure
-
-```
-├── NLP_PR1.ipynb          # Tasks 1-7 (full analysis)
-├── NLP_PR1.html           # HTML export of the notebook
-├── app.py                 # Streamlit app
-├── nlp_utils.py           # clean_text + heuristic lexicon (shared by notebook and app)
-├── sentiment_model.joblib # saved scikit-learn pipeline
-├── requirements.txt       # pinned versions
-├── README.md
-└── screenshots/           # app and analysis screenshots
-```
 
 <br>
 
