@@ -45,11 +45,11 @@
 
 <div align="center">
 
-[![Watch the Project Walkthrough](https://img.shields.io/badge/▶%20Watch%20Full%20Walkthrough-Google%20Drive-4285F4?style=for-the-badge&logo=google-drive&logoColor=white)](YOUR-VIDEO-LINK)
+[![Watch the Project Walkthrough](https://img.shields.io/badge/▶%20Watch%20Full%20Walkthrough-Google%20Drive-4285F4?style=for-the-badge&logo=google-drive&logoColor=white)](https://drive.google.com/file/d/1WWYS7KcfMxWoJYRmMUgZdvupSaYDV6mo/view?usp=sharing)
 
 🎥 **A complete video explanation (face + screen, 5–10 min)** covering the NLP pipeline, key RegEx patterns and why negations are kept, heuristic vs API-based vs ML results, BoW vs TF-IDF, what N-grams add and cost, CBoW vs Skip-gram, how a POS tagger uses context, why the vectoriser is fitted on training data only, and a **live test of the deployed app** with new inputs.
 
-> 📌 *Click the button above or [open the video directly →](YOUR-VIDEO-LINK)*
+> 📌 *Click the button above or [open the video directly →](https://drive.google.com/file/d/1WWYS7KcfMxWoJYRmMUgZdvupSaYDV6mo/view?usp=sharing)*
 
 </div>
 

@@ -58,7 +58,6 @@ def set_example(text):
 
 st.title('Airline Tweet Sentiment Analyzer')
 st.sidebar.header('About')
-st.sidebar.write('NLP PR 1 - Red & White Skill Education. Sentiment of airline tweets using three approaches.')
 st.sidebar.markdown('[Dataset: Twitter US Airline Sentiment](https://www.kaggle.com/datasets/crowdflower/twitter-airline-sentiment)')
 
 st.text_area('Enter a tweet', key='tweet', height=120)
