@@ -1,8 +1,23 @@
+"""Text cleaning and the rule-based (heuristic) sentiment approach.
+
+Word lists live in the `lexicon/` folder (one word per line) so they can be
+edited without touching the code.
+"""
 import re
 
-negation_words = ['arent', 'cannot', 'cant', 'couldnt', 'didnt', 'doesnt', 'dont', 'isnt', 'never', 'no', 'nor', 'not', 'shouldnt', 'wasnt', 'wont', 'wouldnt']
-positive_words = ['amazing', 'appreciate', 'appreciated', 'awesome', 'best', 'comfortable', 'early', 'easy', 'enjoy', 'enjoyed', 'excellent', 'fantastic', 'fast', 'friendly', 'good', 'great', 'happy', 'helpful', 'impressed', 'kudos', 'love', 'loved', 'nice', 'outstanding', 'perfect', 'pleasant', 'polite', 'professional', 'quick', 'resolved', 'safe', 'smooth', 'thank', 'thanks', 'welcome', 'wonderful']
-negative_words = ['angry', 'awful', 'bad', 'broken', 'canceled', 'cancellation', 'cancelled', 'complaint', 'damaged', 'delay', 'delayed', 'delays', 'disappointed', 'disappointing', 'disgusting', 'failed', 'hate', 'hold', 'horrible', 'late', 'lost', 'missed', 'nightmare', 'overbooked', 'poor', 'refund', 'ridiculous', 'rude', 'slow', 'stuck', 'terrible', 'unacceptable', 'unhelpful', 'useless', 'waiting', 'worse', 'worst']
+from config import LEXICON_DIR, NEGATION_WINDOW
+
+
+def load_words(file_name):
+    """Read a word list file into a set (blank lines and # comments ignored)."""
+    path = LEXICON_DIR / file_name
+    lines = path.read_text(encoding='utf-8').splitlines()
+    return {line.strip() for line in lines if line.strip() and not line.startswith('#')}
+
+
+positive_words = load_words('positive_words.txt')
+negative_words = load_words('negative_words.txt')
+negation_words = load_words('negation_words.txt')
 
 
 def clean_text(s):
@@ -16,9 +31,13 @@ def clean_text(s):
     return s
 
 
-def heuristic_score(text):
+def heuristic_matches(text):
+    """Return every lexicon word found in the text with its effect on the score.
+
+    Each item: {'word', 'value' (+1/-1 after negation), 'negated' (bool)}.
+    """
     words = clean_text(text).split()
-    score = 0
+    matches = []
     for i, w in enumerate(words):
         if w in positive_words:
             value = 1
@@ -26,10 +45,13 @@ def heuristic_score(text):
             value = -1
         else:
             continue
-        if any(p in negation_words for p in words[max(0, i - 2):i]):
-            value = -value
-        score += value
-    return score
+        negated = any(p in negation_words for p in words[max(0, i - NEGATION_WINDOW):i])
+        matches.append({'word': w, 'value': -value if negated else value, 'negated': negated})
+    return matches
+
+
+def heuristic_score(text):
+    return sum(m['value'] for m in heuristic_matches(text))
 
 
 def heuristic_sentiment(text):
