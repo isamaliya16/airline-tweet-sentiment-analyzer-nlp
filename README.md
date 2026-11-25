@@ -35,7 +35,7 @@
 
 <img src="screenshots/01_app_start.png" alt="App start screen" width="780"/>
 
-*The Streamlit app: text box, example buttons, approach selector and Predict button.*
+*Streamlit app*
 
 </div>
 
